@@ -1,0 +1,37 @@
+# Pipeline 的名字，随便起
+name: MyTestPipeline
+# trigger 是"触发器"，这里设置成 none 表示不自动运行，只能手动触发
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+# stages 是"阶段"，我们只要一个阶段
+stages:
+- stage: RunScript
+  displayName: '运行测试脚本'
+  jobs:
+  - job: TestJob
+    displayName: '执行任务'
+    
+    # container 就是 Docker 容器，这里用一个自带 Python 和 Node.js 的镜像
+    container:
+      image: nikolaik/python-nodejs:latest
+    
+    steps:
+    # 第一步：先把代码下载下来
+    - checkout: self
+    
+    # 第二步：运行你的脚本
+    - script: |
+        echo "==== 环境信息 ===="
+        python --version
+        node --version
+        echo "===================="
+        
+        # 在这里写你想运行的命令
+        # 例如：python your_script.py
+        # 或者：npm install && npm test
+        
+        echo "脚本运行完成！"
+      displayName: '执行测试命令'
